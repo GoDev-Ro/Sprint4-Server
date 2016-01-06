@@ -30,7 +30,7 @@ router.route('/:dev/entries')
     .post(function(req, res) {
         store.setDev(req.params.dev).add(req.body).then(
             function(item) {
-                res.json(item);
+                res.status(201).json(item);
             },
             function(error) {
                 res.status(409).json({
