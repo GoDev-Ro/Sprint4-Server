@@ -18,10 +18,14 @@ router.route('/:dev/entries')
             perPage = Math.max(parseInt(req.query.perPage || 5, 10), 2);
 
         store.setDev(req.params.dev).getPage(page, perPage).then(
-            function(entries) {
+            function(result) {
+                var entries = result[0],
+                    total = result[1];
+                
                 res.json({
                     page: page,
                     perPage: perPage,
+                    totalPages: Math.ceil(total / perPage),
                     list: entries
                 });
             }

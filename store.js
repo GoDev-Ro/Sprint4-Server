@@ -69,7 +69,7 @@ module.exports = {
         return this;
     },
     getPage: function(page, perPage) {
-        return new Promise(function(resolve, reject) {
+        var entriesPromise = new Promise(function(resolve, reject) {
             var entries = getCurrentDevEntries();
             
             if ((page - 1) * perPage > entries.length) {
@@ -78,6 +78,12 @@ module.exports = {
 
             resolve(entries.slice((page - 1) * perPage, Math.min(entries.length, page * perPage)));
         });
+        
+        var totalPromise = new Promise(function(resolve, reject) {
+            resolve(getCurrentDevEntries().length);
+        });
+        
+        return Promise.all([entriesPromise, totalPromise]);
     },
     add: function(item) {
         return new Promise(function(resolve, reject) {
