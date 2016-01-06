@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "name": "Bucharest",
+    "visited": 1,
+    "stars": 3
+  },
+  {
+    "id": 2,
+    "name": "London",
+    "visited": 1,
+    "stars": 4
+  },
+  {
+    "id": 3,
+    "name": "Berlin",
+    "visited": 0,
+    "stars": 4
+  },
+  {
+    "id": 4,
+    "name": "Amsterdam",
+    "visited": 1,
+    "stars": 5
+  }
+]

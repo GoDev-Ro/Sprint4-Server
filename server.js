@@ -1,0 +1,74 @@
+var express     = require('express');
+var app         = express();
+var bodyParser  = require('body-parser');
+var port        = process.env.PORT || 8080;
+var router      = express.Router();
+var store       = require('./store');
+
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+router.get('/', function(req, res) {
+    res.json({ message: 'API works, but this endpoint does nothing' });
+});
+
+router.route('/:dev/entries')
+    .get(function(req, res) {
+        var page = Math.max(parseInt(req.query.page || 1, 10), 1),
+            perPage = Math.max(parseInt(req.query.perPage || 5, 10), 2);
+
+        store.setDev(req.params.dev).getPage(page, perPage).then(
+            function(entries) {
+                res.json({
+                    page: page,
+                    perPage: perPage,
+                    list: entries
+                });
+            }
+        );
+    })
+    .post(function(req, res) {
+        store.setDev(req.params.dev).add(req.body).then(
+            function(item) {
+                res.json(item);
+            },
+            function(error) {
+                res.status(409).json({
+                    error: error.message
+                });
+            }
+        );
+    });
+
+router.route('/:dev/entries/:id')
+    .put(function(req, res) {
+        store.setDev(req.params.dev)
+            .update(req.params.id, req.body)
+            .then(
+                function(item) {
+                    res.json(item);
+                },
+                function(error) {
+                    res.status(409).json({
+                        error: error.message
+                    });
+                }
+            );
+    })
+    .delete(function(req, res) {
+        store.setDev(req.params.dev).delete(req.params.id).then(
+            function() {
+                res.status(204).send();
+            },
+            function(error) {
+                res.status(409).json({
+                    error: error.message
+                });
+            }
+        );
+    });
+
+app.use('/api', router);
+app.listen(port);
+
+console.log('Listening on port ' + port);

@@ -1,0 +1,16 @@
+{
+  "name": "godev-sprint4-server",
+  "version": "1.0.0",
+  "description": "Server for storing the data in the Sprint #4 deliverable",
+  "author": "Dragos Badea <bedeabza@gmail.com>",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "main": "server.js",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.14.2",
+    "express": "^4.13.3",
+    "promise": "^7.1.1"
+  }
+}
