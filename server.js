@@ -13,6 +13,9 @@ router.get('/', function(req, res) {
 });
 
 router.route('/:dev/entries')
+    .options(function(req, res) {
+        res.header('Access-Control-Allow-Methods', 'GET, POST').send();
+    })
     .get(function(req, res) {
         var page = Math.max(parseInt(req.query.page || 1, 10), 1),
             perPage = Math.max(parseInt(req.query.perPage || 5, 10), 2);
@@ -45,6 +48,9 @@ router.route('/:dev/entries')
     });
 
 router.route('/:dev/entries/:id')
+    .options(function(req, res) {
+        res.header('Access-Control-Allow-Methods', 'PUT, DELETE').send();
+    })
     .put(function(req, res) {
         store.setDev(req.params.dev)
             .update(req.params.id, req.body)
@@ -73,6 +79,15 @@ router.route('/:dev/entries/:id')
     });
 
 app.use('/api', router);
+app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Cache-Control', 'no-cache');
+    
+    next();
+});
+
 app.listen(port);
 
 console.log('Listening on port ' + port);
