@@ -8,6 +8,15 @@ var store       = require('./store');
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
+app.use(function(req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Credentials', 'true');
+    res.header('Access-Control-Allow-Headers', 'Content-Type');
+    res.header('Cache-Control', 'no-cache');
+
+    next();
+});
+
 router.get('/', function(req, res) {
     res.json({ message: 'API works, but this endpoint does nothing' });
 });
@@ -79,15 +88,6 @@ router.route('/:dev/entries/:id')
     });
 
 app.use('/api', router);
-app.use(function(req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Credentials', 'true');
-    res.header('Access-Control-Allow-Headers', 'Content-Type');
-    res.header('Cache-Control', 'no-cache');
-    
-    next();
-});
-
 app.listen(port);
 
 console.log('Listening on port ' + port);
