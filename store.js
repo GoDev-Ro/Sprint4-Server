@@ -132,7 +132,7 @@ module.exports = {
         var self = this;
         
         return new Promise(function(resolve, reject) {
-            City.remove({id: id}, function(err, numRemoved) {
+            City.find({_id: id}).remove(function(err, numRemoved) {
                 if (numRemoved) {
                     resolve();
                 } else {
