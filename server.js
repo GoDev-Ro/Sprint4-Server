@@ -27,7 +27,7 @@ router.route('/:dev/entries')
     })
     .get(function(req, res) {
         var page = Math.max(parseInt(req.query.page || 1, 10), 1),
-            perPage = Math.max(parseInt(req.query.perPage || 5, 10), 2);
+            perPage = Math.max(parseInt(req.query.perPage || 5, 10), 1);
 
         store.setDev(req.params.dev).getPage(page, perPage).then(
             function(result) {
@@ -39,6 +39,11 @@ router.route('/:dev/entries')
                     perPage: perPage,
                     totalPages: Math.ceil(total / perPage),
                     list: entries
+                });
+            },
+            function(error) {
+                res.status(500).json({
+                    error: error.message
                 });
             }
         );
@@ -58,7 +63,21 @@ router.route('/:dev/entries')
 
 router.route('/:dev/entries/:id')
     .options(function(req, res) {
-        res.header('Access-Control-Allow-Methods', 'PUT, DELETE').send();
+        res.header('Access-Control-Allow-Methods', 'GET, PUT, DELETE').send();
+    })
+    .get(function(req, res) {
+        store.setDev(req.params.dev)
+            .get(req.params.id)
+            .then(
+                function(item) {
+                    res.json(item);
+                },
+                function(error) {
+                    res.status(409).json({
+                        error: error.message
+                    });
+                }
+            );
     })
     .put(function(req, res) {
         store.setDev(req.params.dev)

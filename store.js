@@ -1,40 +1,9 @@
-var database = {},
-    currentDev = '__none',
+var currentDev = '__none',
     Promise = require('promise'),
     fs = require("fs"),
-    defaultEntries = JSON.parse(fs.readFileSync('./default_entries.json').toString());
-
-var getCurrentDevEntries = function() {
-    if (!database.hasOwnProperty(currentDev)) {
-        database[currentDev] = JSON.parse(JSON.stringify(defaultEntries));
-    }
-
-    return database[currentDev];
-};
-
-var findEntryIndexWithId = function(id) {
-    var entries = getCurrentDevEntries();
-
-    for (i in entries) { 
-        if (entries.hasOwnProperty(i) && entries[i].id == id) {
-            return i;
-        }
-    }
-
-    return null;
-};
-
-var findEntryWithId = function(id) {
-    return new Promise(function(resolve, reject) {
-        var index = findEntryIndexWithId(id);
-        
-        if (index) {
-            resolve(getCurrentDevEntries()[index]);
-        } else {
-            reject();
-        }
-    });
-};
+    defaultEntries = JSON.parse(fs.readFileSync('./default_entries.json').toString()),
+    City = require('./city'),
+    _ = require('underscore');
 
 var validateItem = function(item) {
     var allowedProperties = ['name', 'visited', 'stars'],
@@ -63,6 +32,17 @@ var validateItem = function(item) {
     }
 };
 
+var fromDb = function(item) {
+    item = JSON.parse(JSON.stringify(item));
+    
+    item.id = item._id;
+    delete item.__v;
+    delete item._id;
+    delete item.dev;
+    
+    return item;
+};
+
 module.exports = {
     setDev: function(dev) {
         currentDev = dev;
@@ -70,69 +50,95 @@ module.exports = {
     },
     getPage: function(page, perPage) {
         var entriesPromise = new Promise(function(resolve, reject) {
-            var entries = getCurrentDevEntries();
+            var start = (page - 1) * perPage;
             
-            if ((page - 1) * perPage > entries.length) {
-                return [];
-            }
-
-            resolve(entries.slice((page - 1) * perPage, Math.min(entries.length, page * perPage)));
+            City.find({dev: currentDev}).skip(start).limit(perPage).exec(function(err, data) {
+                if (err) {
+                    reject(new Error(err));
+                } else {
+                    resolve(_.map(data, fromDb));
+                }
+            });
         });
         
         var totalPromise = new Promise(function(resolve, reject) {
-            resolve(getCurrentDevEntries().length);
+            City.count({dev: currentDev}, function(err, count) {
+                if (err) {
+                    reject(new Error(err));
+                } else {
+                    resolve(count);
+                }
+            });
         });
         
         return Promise.all([entriesPromise, totalPromise]);
     },
+    get: function(id) {
+        return new Promise(function(resolve, reject) {
+            City.findOne({dev: currentDev, _id: id}, function(err, city) {
+                if (err) {
+                    reject(new Error(err));
+                } else {
+                    resolve(fromDb(city));
+                }
+            });
+        });
+    },
     add: function(item) {
         return new Promise(function(resolve, reject) {
-            var entries = getCurrentDevEntries();
-
             try {
                 validateItem(item);
-                entries.push(item);
+                item.dev = currentDev;
 
-                item.id = entries.length;
-
-                resolve(item);
+                City.create(item, function(err, city) {
+                    if (err) {
+                        reject(new Error(err));
+                    } else {
+                        resolve(fromDb(city));
+                    }
+                });
             } catch (e) {
                 reject(e);
             }
         });
     },
     update: function(id, item) {
+        var self = this;
+        
         return new Promise(function(resolve, reject) {
-            findEntryWithId(id).then(
-                function(itemToUpdate) {
+            self.get(id).then(
+                function() {
                     try {
                         validateItem(item);
-
-                        for (i in item) {
-                            itemToUpdate[i] = item[i];
-                        }
                         
-                        resolve(itemToUpdate);
+                        City.update({_id: id}, item, {multi: false}, function(err, numAffected) {
+                            if (err) {
+                                reject({error: err});
+                            } else {
+                                self.get(id).then(resolve, reject);
+                            }
+                        });
                     } catch (e) {
                         reject(e);
                     }
                 },
-                function() {
+                function(a) {
                     reject(new Error('No item with ID "' + id + '" found'));
                 }
             );
         });
     },
     delete: function(id) {
+        var self = this;
+        
         return new Promise(function(resolve, reject) {
-            var indexToDelete = findEntryIndexWithId(id);
-            
-            if (indexToDelete) {
-                getCurrentDevEntries().splice(indexToDelete, 1);
-                resolve();
-            } else {
-                reject(new Error('No item with ID "' + id + '" found'))
-            }
+            City.remove({id: id}, function(err, numRemoved) {
+                if (numRemoved) {
+                    resolve();
+                } else {
+                    reject(new Error('No item with ID "' + id + '" found'));
+                }
+            });
         });
     }
 };
