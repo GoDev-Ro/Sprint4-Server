@@ -48,11 +48,24 @@ module.exports = {
         currentDev = dev;
         return this;
     },
-    getPage: function(page, perPage) {
+    getPage: function(page, perPage, sortField, sortDir) {
         var entriesPromise = new Promise(function(resolve, reject) {
-            var start = (page - 1) * perPage;
+            var start = (page - 1) * perPage,
+                allowedFields = ['name', 'visited', 'stars'],
+                allowedDirs = ['asc', 'desc'],
+                sortObj = {};
             
-            City.find({dev: currentDev}).skip(start).limit(perPage).exec(function(err, data) {
+            if (allowedFields.indexOf(sortField) === -1) {
+                return reject(new Error('Parameter sortField must have one of the following values: ' + allowedFields.join(', ')));
+            }
+            
+            if (allowedDirs.indexOf(sortDir) === -1) {
+                return reject(new Error('Parameter sortDir must have one of the following values: ' + allowedDirs.join(', ')));
+            }
+            
+            sortObj[sortField] = sortDir;
+            
+            City.find({dev: currentDev}).skip(start).limit(perPage).sort(sortObj).exec(function(err, data) {
                 if (err) {
                     reject(new Error(err));
                 } else {

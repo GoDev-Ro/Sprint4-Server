@@ -27,9 +27,11 @@ router.route('/:dev/entries')
     })
     .get(function(req, res) {
         var page = Math.max(parseInt(req.query.page || 1, 10), 1),
-            perPage = Math.max(parseInt(req.query.perPage || 5, 10), 1);
+            perPage = Math.max(parseInt(req.query.perPage || 5, 10), 1),
+            sortField = req.query.sortField || 'name',
+            sortDir = req.query.sortDir || 'asc';
 
-        store.setDev(req.params.dev).getPage(page, perPage).then(
+        store.setDev(req.params.dev).getPage(page, perPage, sortField, sortDir).then(
             function(result) {
                 var entries = result[0],
                     total = result[1];
