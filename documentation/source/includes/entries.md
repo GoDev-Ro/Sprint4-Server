@@ -38,6 +38,33 @@ Parameter | Default | Description
 --------- | ------- | -----------
 page | 1 | Get a specific page of the result set
 perPage | 5 | How many items per page should be returned
+sortField | name | Which property to sort the items on
+sortDir | asc | Direction for sorting, must be one of 'asc', 'desc'
+
+## Fetch a specific entry
+
+> Sample request
+
+```shell
+curl -X GET \
+http://server.godev.ro:8080/api/michael/entries/1
+```
+
+> Sample response (**status 200**)
+
+
+```json
+{
+    "id": 1,
+    "name": "Bucharest",
+    "visited": 1,
+    "stars": 3
+}
+```
+
+### HTTP Request
+
+`GET /:student/entries/1`
 
 ## Create an entry
 
