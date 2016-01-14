@@ -91,8 +91,10 @@ module.exports = {
             City.findOne({dev: currentDev, _id: id}, function(err, city) {
                 if (err) {
                     reject(new Error(err));
-                } else {
+                } else if (city) {
                     resolve(fromDb(city));
+                } else {
+                    reject(new Error('Invalid city ID: ' + id));
                 }
             });
         });
