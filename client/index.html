@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sprint4 Client</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <div class="loading"><img src="images/loading.gif"></div>
+    <div class="container">
+        <div class="row header">
+            <h1>Sprint #4 Project</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 col-xs-12">
+                <form class="form-horizontal" id="the-form">
+                    <div class="form-group">
+                        <label for="name" class="col-sm-2 control-label">Name</label>
+                        <div class="col-sm-10">
+                            <input type="text" class="form-control" id="name" placeholder="City name" name="name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <div class="checkbox">
+                                <label>
+                                    <input type="checkbox" name="visited"> Visited
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="stars" class="col-sm-2 control-label">Stars</label>
+                        <div class="col-sm-10">
+                            <div class="form-control"><input type="text" id="stars" class="stars-input" name="stars"></div>
+                        </div>
+                    </div>
+                    <div class="form-group when-adding">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-primary">Add</button>
+                        </div>
+                    </div>
+                    <div class="form-group when-editing">
+                        <div class="col-sm-offset-2 col-sm-10">
+                            <button type="submit" class="btn btn-primary">Update</button>
+                            <button class="btn btn-default bt-cancel">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-md-6 col-xs-12">
+                <div class="container-fluid">
+                    <div class="row">
+                        <table class="table table-bordered table-striped" id="the-table">
+                            <thead>
+                            <tr>
+                                <th><a href="#" class="sort" data-field="name" data-dir="desc">City <i class="fa fa-fw fa-sort-up"></i></a></th>
+                                <th><a href="#" class="sort" data-field="visited" data-dir="asc">Visited <i class="fa fa-fw fa-sort"></i></a></th>
+                                <th><a href="#" class="sort" data-field="stars" data-dir="desc">Stars <i class="fa fa-fw fa-sort"></i></a></th>
+                                <th width="70">&nbsp;</th>
+                            </tr>
+                            </thead>
+                            <tbody class="with-data"></tbody>
+                            <tbody class="without-data">
+                            <tr>
+                                <td colspan="4">No cities found</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="row">
+                        <nav>
+                            <ul class="pagination">
+                                <li>
+                                    <a href="#" aria-label="Previous" class="prev">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>
+                                </li>
+                                <li><a href="#">Page <span class="page">1</span> of <span class="total-pages">1</span></a></li>
+                                <li>
+                                    <a href="#" aria-label="Next" class="next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script type="text/html" id="tr-template">
+        <tr data-id="<%= id %>">
+            <td><a href="#" class="giphy"><%= name %></a></td>
+            <td><%= visited ? 'YES' : 'NO' %></td>
+            <td><%= new Array(stars + 1).join('★') %></td>
+            <td>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-default btn-xs bt-edit"><i class="glyphicon glyphicon-pencil"></i></button>
+                    <button type="button" class="btn btn-danger btn-xs bt-delete"><i class="glyphicon glyphicon-remove"></i></button>
+                </div>
+            </td>
+        </tr>
+    </script>
+    
+    <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+    <script type="text/javascript" src="js/template-engine.js"></script>
+    <script type="text/javascript" src="js/stars.jquery.js"></script>
+    <script type="text/javascript" src="js/store.js"></script>
+    <script type="text/javascript" src="js/giphy.js"></script>
+    <script type="text/javascript" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,70 @@
+.loading {
+    position: absolute;
+    right: 30px;
+    top: 30px;
+    display: none;
+}
+
+.header {
+    padding-bottom: 50px;
+}
+
+nav {
+    text-align: center;
+}
+
+table th a {
+    display: block;
+    width: 100%;
+}
+
+table th a i {
+    float: right;
+}
+
+table th a:hover {
+    text-decoration: none;
+}
+
+.when-editing,
+.editing .when-adding {
+    display: none;
+}
+
+.editing .when-editing {
+    display: block;
+}
+
+.stars-container {
+    font-size: 24px;
+    position: relative;
+    top: -7px;
+    left: -6px;
+}
+
+.stars-container .star {
+    cursor: pointer;
+}
+
+.star.hover {
+    color: gold;
+}
+
+#giphy-container {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+    background-color: rgba(0, 0, 0, .7);
+    text-align: center;
+    display: none;
+}
+
+#giphy-container img {
+    text-align: center;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
